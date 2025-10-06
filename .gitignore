@@ -1,0 +1,17 @@
+# Terraform local directories
+**/.terraform/*
+
+# Terraform state files
+*.tfstate
+*.tfstate.backup
+
+# Crash logs
+crash.log
+
+# Terraform lock file
+.terraform.lock.hcl
+
+# Ignore provider binaries and keys
+*.exe
+*.pem
+*.key
