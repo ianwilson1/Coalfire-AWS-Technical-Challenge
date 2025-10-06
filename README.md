@@ -19,8 +19,6 @@ The infrastructure is fully designed with Terraform to allow for consistent and 
 ####### Design Decisions and Assumptions
 - A lot of the services or instance types were chosen based off the instructions from the technical challenge document or were chosen to keep costs in the free tier or at the very least keep it as minimal as possible.
 
-- I attempted to put each of the core components in different modules, however I ultimately decided to leave all of the Terraform in one main.tf due to simplicity reasons and to not overcomplicate debugging as I incrementedly added in different features. I recognize the importance of modules however, in larger or long-term use environments where the environment will grow overtime. Modules can increase scalability and maintainability in those examples. 
-
 - The region chosen for this challenge was us-east-1 as it seemed to be a solid choice for the nature of this challenge and has a lot of resources available.
 
 - There was temporary internet access route initially created for the private subnet that needed to have apache installed, but it can be removed upon the creation of a NAT Gateway to prevent unnecessary exposure to the internet. NAT Gateways can increase cost, but ultimately help to achieve the goals of the 3 tier wep application.
