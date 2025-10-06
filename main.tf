@@ -11,132 +11,11 @@ terraform {
   }
 }
 
-
-####### Network #######
-
-# setting up what region that will get used
-provider "aws" {
-  region = "us-east-1"
-}
-
-# enable encryption for the root ebs volume
-# added after initial infrastructure analysis
-resource "aws_ebs_encryption_by_default" "example" {
-  enabled = true
-}
-
-# setting up the vpc and with specific configuration
-resource "aws_vpc" "vpc_1" {
-    cidr_block = "10.1.0.0/16"
-
-    tags = {
-        name = "my_vpc_1" # make it easier to reference this vpc later
-    }
-}
-
-# setting up application subnet as first subnet, should be private
-resource "aws_subnet" "subnet_1" {
-    cidr_block = "10.1.1.0/24"
-    vpc_id = aws_vpc.vpc_1.id # this will tie it to my vpc
-    availability_zone = "us-east-1a" # attach it to an AZ
-
-    tags = {
-        name = "application"
-    }
-}
-
-# setting up the management subnet, this is the one that is accessible from the internet
-resource "aws_subnet" "subnet_2" {
-    cidr_block = "10.1.2.0/24"
-    vpc_id = aws_vpc.vpc_1.id
-    availability_zone = "us-east-1a"
-    map_public_ip_on_launch = true # needed for any subnet that has access to the internet
-
-    tags = {
-        name = "management"
-    }
-}
-
-# backend subnet, also not accessible from the internet
-resource "aws_subnet" "subnet_3" {
-    cidr_block = "10.1.3.0/24"
-    vpc_id = aws_vpc.vpc_1.id
-    availability_zone = "us-east-1b"
-
-    tags = {
-        name = "backend"
-    }
-}
-
-# establish an internet gateway and attach it to the vpc being used
-resource "aws_internet_gateway" "internet_gateway" {
-    vpc_id = aws_vpc.vpc_1.id
-
-    tags = {
-        name = "igw"
-    }
-}
-
-# allocate elastic IP for NAT Gateway
-# added in after initial analysis of infrastructure
-resource "aws_eip" "nat_eip" {
-  domain = "vpc"
-}
-
-# NAT gateway for the management subnet (this one is public)
-# added in after initial analysis of infrastructure
-resource "aws_nat_gateway" "nat_gw" {
-  connectivity_type = "public"
-  subnet_id = aws_subnet.subnet_2.id # management subnet
-  allocation_id = aws_eip.nat_eip.id
-  
-
-  tags = {
-    name = "nat_gateway"
-  }
-
-  depends_on = [aws_internet_gateway.internet_gateway]
-}
-
-# private route table to route internet traffic through the NAT gateway
-resource "aws_route_table" "private_rt" {
-  vpc_id = aws_vpc.vpc_1.id
-
-  route {
-    cidr_block = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.nat_gw.id
-  }
-
-  tags = {
-     name = "private_rt"
-  }
-}
-
-# this will associate the private route table with application subnet so it can install apache
-resource "aws_route_table_association" "app_private_rt" {
-  subnet_id = aws_subnet.subnet_1.id
-  route_table_id = aws_route_table.private_rt.id
-}
-
-# route table for public management subnet
-resource "aws_route_table" "public_access" {
-  vpc_id = aws_vpc.vpc_1.id
-
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.internet_gateway.id
-  }
-
-  tags = {
-    name = "public_rt"
-  }
-}
-
-# associate the management subnet to the public access route table so it may reach the internet
-resource "aws_route_table_association" "public_access_association" {
-    subnet_id = aws_subnet.subnet_2.id
-
-    route_table_id = aws_route_table.public_access.id
+# connect the network module
+module "network" {
+  source   = "./modules/network"
+  vpc_cidr = "10.1.0.0/16"
+  vpc_name = "my_vpc_1"
 }
 
 ####### Compute #######
@@ -147,7 +26,7 @@ variable "my_ip_cidr" {
 
 # setting up security group for management ec2
 resource "aws_security_group" "management_sg" {
-    vpc_id = aws_vpc.vpc_1.id
+    vpc_id = module.network.vpc_id
     name = "management_sg"
     description = "management security group"
 
@@ -165,7 +44,7 @@ resource "aws_security_group" "management_sg" {
 
 # security group for application load balancer
 resource "aws_security_group" "alb_sg" {
-    vpc_id = aws_vpc.vpc_1.id
+    vpc_id = module.network.vpc_id
     name = "alb_sg"
     description = "applicaton load balancer security group"
 
@@ -176,7 +55,7 @@ resource "aws_security_group" "alb_sg" {
 
 # ingress rules
 resource "aws_security_group" "sg_1" {
-    vpc_id = aws_vpc.vpc_1.id
+    vpc_id = module.network.vpc_id
     name = "sg_1"
     description = "security group 1"
 
@@ -232,7 +111,7 @@ resource "aws_autoscaling_group" "app_asg" {
     min_size = 2
     max_size = 6
     desired_capacity = 2
-    vpc_zone_identifier = [aws_subnet.subnet_1.id, aws_subnet.subnet_3.id]
+    vpc_zone_identifier = [module.network.subnet_1_id, module.network.subnet_3_id]
 
     launch_template { # attach it to the ec2 instance
         id = aws_launch_template.ec2_application.id
@@ -245,7 +124,7 @@ resource "aws_autoscaling_group" "app_asg" {
 resource "aws_instance" "ec2_management" {
   ami = "ami-052064a798f08f0d3"
   instance_type = "t2.micro"
-  subnet_id = aws_subnet.subnet_2.id
+  subnet_id = module.network.subnet_2_id
   vpc_security_group_ids = [aws_security_group.management_sg.id]
   tags = { Name = "ec2_management" }
 }
@@ -258,7 +137,7 @@ resource "aws_lb" "app_lb" {
   internal = false
   load_balancer_type = "application"
   security_groups = [aws_security_group.alb_sg.id]
-  subnets = [aws_subnet.subnet_1.id, aws_subnet.subnet_3.id] # use public/management subnet so internet can reach it
+  subnets = [module.network.subnet_1_id, module.network.subnet_3_id] # use public/management subnet so internet can reach it
 
   tags = {
     Name = "app_lb"
@@ -270,7 +149,7 @@ resource "aws_lb_target_group" "app_tg" {
   name = "app-target-group"
   port = 80
   protocol = "HTTP"
-  vpc_id = aws_vpc.vpc_1.id
+  vpc_id = module.network.vpc_id
 
   tags = {
     Name = "app_tg"
