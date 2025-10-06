@@ -28,19 +28,40 @@ The infrastructure is fully designed with Terraform to allow for consistent and 
 - The IAM roles were created under the assumption that the EC2s only needed basic permissions.
 
 
+##################################################################################
+
 
 ####### Runbook-Style Notes
-All Terraform resources successfully deployed:
-- 1 VPC (10.1.0.0/16) with 3 subnets (App, Mgmt, Backend)
-- 1 Internet Gateway + 1 NAT Gateway
-- 1 Application Load Balancer with Target Group
-- 1 Auto Scaling Group (2 EC2s running Apache)
-- 1 Management EC2 with IAM Role + SSM Access
+    # Prerequisites: 
+        - Terraform installed on the local machine
+        - AWS CLI with proper IAM credentials that have the necessary permissions
 
-Verification:
-- Terraform Apply completed without errors (see apply log)
-- Private EC2s accessible via Session Manager from management instance
-- ALB Target Group health checks = Healthy
+
+    - How to deploy and operate the environment:
+        - From the CLI, navigate to the directory of the Terraform configuration files and run these 3 commands:
+        - terraform init    # initialize the Terraform files
+        - terraform plan    # review the changes before applying them
+        - terraform apply   # builds and deploys all the resources
+
+        - if you wish to reverse the infrastructure then you can run: 
+        - terraform destroy # destroys all resources in the Terraform config file
+
+    - How to respond to an outage for an EC2 instance:
+        - This infrastructure utilizes an Autoscaling Group (ASG).
+        - In the event an EC2 goes down, the ASG will terminate the instance and launch a fresh one.
+        - To verify the replacement, follow these steps:
+            - on AWS, go to EC2 -> Autoscaling Group
+            - check to see if the new instance is up and running and check its health
+            - You can also check under "Load Balancers" → "Target Groups" to see if the new instance shows as   healthy
+        - In most cases the instances should fix themselves.
+
+    - In the event an S3 bucket is added, these are some steps to restore data if the bucket were deleted.
+        - First see if the bucket had versioning on.
+        - If it is, then you can recover the data from older versions of that bucket.
+        
+        - If it does not having versioning on:
+        - You can restore the data from a backup copy (if saved elsewhere)
+        - For best practices, keep versioning on for S3 buckets and add in MFA for deleting data on the bucket.
 
 
 ##################################################################################
@@ -142,40 +163,6 @@ Verification:
     8) Add budget monitoring for cost optimization to keep tabs on the budget and usage, as well as future estimated usage costs.
 
     Of these changes, the ones that I will implement will be the first three listed since these are the largest security risks to the infrastructure.
-
-    ##################################################################################
-
-    ####### Runbook-Style Notes
-    # Prerequisites: 
-        - Terraform installed on the local machine
-        - AWS CLI with proper IAM credentials that have the necessary permissions
-
-
-    - How to deploy and operate the environment:
-        - From the CLI, navigate to the directory of the Terraform configuration files and run these 3 commands:
-        - terraform init    # initialize the Terraform files
-        - terraform plan    # review the changes before applying them
-        - terraform apply   # builds and deploys all the resources
-
-        - if you wish to reverse the infrastructure then you can run: 
-        - terraform destroy # destroys all resources in the Terraform config file
-
-    - How to respond to an outage for an EC2 instance:
-        - This infrastructure utilizes an Autoscaling Group (ASG).
-        - In the event an EC2 goes down, the ASG will terminate the instance and launch a fresh one.
-        - To verify the replacement, follow these steps:
-            - on AWS, go to EC2 -> Autoscaling Group
-            - check to see if the new instance is up and running and check its health
-            - You can also check under "Load Balancers" → "Target Groups" to see if the new instance shows as   healthy
-        - In most cases the instances should fix themselves.
-
-    - In the event an S3 bucket is added, these are some steps to restore data if the bucket were deleted.
-        - First see if the bucket had versioning on.
-        - If it is, then you can recover the data from older versions of that bucket.
-        
-        - If it does not having versioning on:
-        - You can restore the data from a backup copy (if saved elsewhere)
-        - For best practices, keep versioning on for S3 buckets and add in MFA for deleting data on the bucket.
 
 
 ##################################################################################
