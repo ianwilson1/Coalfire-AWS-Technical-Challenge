@@ -9,7 +9,7 @@
     - [Availability Issues](#availability-issues)
     - [Cost Optimization](#cost-optimization)
     - [Operational Shortcomings](#operational-shortcomings)
-- [Improvement Plan and Priorities](#improvement-plan-and-priorities)
+- [Improvement Plan Priorities](#priorities)
 - [Resources Used](#resources-used)
 
 ###### Solution Overview
@@ -82,7 +82,7 @@ The infrastructure is fully designed with Terraform to allow for consistent and 
 
 ###### Operational Analysis of Infrastructure
 
-- Security Gaps: 
+## Security Gaps: 
 
     #1
     - The application subnet is currently using a temporary public route so that, during provisioning, that EC2 instance can install Apache. This is a problem because that will likely expose the subnet to external access during setup and does not align well with security best practices.
@@ -109,7 +109,7 @@ The infrastructure is fully designed with Terraform to allow for consistent and 
 ##################################################################################
 
 
-    - Availability Issues:
+## Availability Issues:
 
     #1
     - Right now, there is not very much utilization of different availability zones. The application and management subnet are in the same availability zone, and that poses an availability risk. If that AZ were to go down, those servers would not be reachable and pose a major operation risk. 
@@ -127,7 +127,7 @@ The infrastructure is fully designed with Terraform to allow for consistent and 
     ##################################################################################
 
 
-    - Cost Optimization:
+## Cost Optimization:
     
     #1
     - There is no cost monitoring in place, so it will be hard to keep track of costs, especially if there is a budget you need to stay under.
@@ -138,7 +138,7 @@ The infrastructure is fully designed with Terraform to allow for consistent and 
 
     ##################################################################################
 
-    - Operational Shortcomings:
+## Operational Shortcomings:
 
     #1
     - There is no means of any kind of patch management for the EC2 instances, this is a problem because as the installed packages or operating system become outdated, it potentially will become vulnerable to known security exploits. This will compromise the system if its not frequently patched to cover vulnerabilities proactively. 
@@ -154,7 +154,7 @@ The infrastructure is fully designed with Terraform to allow for consistent and 
 
     ##################################################################################
 
-    - Priority List:
+## Priority List:
 
     Overview:
     - For the priority in which I feel should be getting fixed first, as an overview I would focus on Security fixes first as the highest priority as these are the most compromising to the infrastructure. Once I am confident in the security, I would then optimize any operation shortcomings because if you cannot see any current issues with the infrastructure or apply any changes, then no matter how secure it is, it will degrade over time. I would focus on Availability next as this will add a lot of resiliency to the infrastructure and make it more effective at recovery in the event of something going down, but it is not as critical as the previous two. Lastly, I would optimize cost once the others have been addressed as it is not as critical as the other issues but it is nice to optimize where you can to fit a companies business needs and to make the infrastructure the best it can be.
