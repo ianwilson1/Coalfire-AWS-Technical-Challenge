@@ -1,5 +1,7 @@
 ############### Coalfire AWS Technical Challenge Oct 2025 - Ian Wilson ###############
 
+####### Note: You can find the diagram for my solution and the evidence folder inside of 'Documents'
+
 ## Table of Contents:
 - [Solution Overview](#solution-overview)
 - [Design Decisions and Assumptions](#design-decisions-and-assumptions)
