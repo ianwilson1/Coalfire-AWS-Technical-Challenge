@@ -1,5 +1,17 @@
 ############### Coalfire AWS Technical Challenge Oct 2025 - Ian Wilson ###############
 
+###### Table of Contents:
+- [Solution Overview](#solution-overview)
+- [Design Decisions and Assumptions](#design-decisions-and-assumptions)
+- [Runbook-Style Notes](#runbook-style-notes)
+- [Operational Analysis](#operational-analysis)
+    - [Security Gaps](#security-gaps)
+    - [Availability Issues](#availability-issues)
+    - [Cost Optimization](#cost-optimization)
+    - [Operational Shortcomings](#operational-shortcomings)
+- [Improvement Plan and Priorities](#improvement-plan-and-priorities)
+- [Resources Used](#resources-used)
+
 ###### Solution Overview
 
 The goal of this challenge was to create a proof of concept AWS environment using Terraform. This setup showcases a basic 3 tier web application with networking, computing and a load balancer to support a simple web applcation.
