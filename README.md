@@ -1,6 +1,7 @@
 ############### Coalfire AWS Technical Challenge Oct 2025 - Ian Wilson ###############
 
-####### Solution Overview
+###### Solution Overview
+
 The goal of this challenge was to create a proof of concept AWS environment using Terraform. This setup showcases a basic 3 tier web application with networking, computing and a load balancer to support a simple web applcation.
 
 The infrastructure is fully designed with Terraform to allow for consistent and repeatable deployments of resources to the cloud. the infrastructure currently includes:
@@ -16,7 +17,8 @@ The infrastructure is fully designed with Terraform to allow for consistent and 
 
 
 
-####### Design Decisions and Assumptions
+###### Design Decisions and Assumptions
+
 - A lot of the services or instance types were chosen based off the instructions from the technical challenge document or were chosen to keep costs in the free tier or at the very least keep it as minimal as possible.
 
 - The region chosen for this challenge was us-east-1 as it seemed to be a solid choice for the nature of this challenge and has a lot of resources available.
@@ -29,7 +31,8 @@ The infrastructure is fully designed with Terraform to allow for consistent and 
 ##################################################################################
 
 
-####### Runbook-Style Notes
+###### Runbook-Style Notes
+
     # Prerequisites: 
         - Terraform installed on the local machine
         - AWS CLI with proper IAM credentials that have the necessary permissions
@@ -65,7 +68,8 @@ The infrastructure is fully designed with Terraform to allow for consistent and 
 ##################################################################################
 
 
-####### Operational Analysis of Infrastructure
+###### Operational Analysis of Infrastructure
+
 - Security Gaps: 
 
     #1
@@ -166,7 +170,8 @@ The infrastructure is fully designed with Terraform to allow for consistent and 
 ##################################################################################
 
 
-    Resources Used: 
+   ###### Resources Used: 
+
         Terraform on AWS: Ultimate Beginner guide
         1) https://youtu.be/RiBSzAgt2Hw?si=5ovWO0nn7o_H90pO
 
