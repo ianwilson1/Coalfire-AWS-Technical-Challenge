@@ -4,7 +4,7 @@
 - [Solution Overview](#solution-overview)
 - [Design Decisions and Assumptions](#design-decisions-and-assumptions)
 - [Runbook-Style Notes](#runbook-style-notes)
-- [Operational Analysis](#operational-analysis)
+- [Operational Analysis of Infrastructure](#operational-analysis-of-infrastructure)
     - [Security Gaps](#security-gaps)
     - [Availability Issues](#availability-issues)
     - [Cost Optimization](#cost-optimization)
@@ -154,7 +154,7 @@ Improvement Plan:
 
     ##################################################################################
 
-## Priority List:
+## Improvement Plan Priorities:
 
 Overview:
 - For the priority in which I feel should be getting fixed first, as an overview I would focus on Security fixes first as the highest priority as these are the most compromising to the infrastructure. Once I am confident in the security, I would then optimize any operation shortcomings because if you cannot see any current issues with the infrastructure or apply any changes, then no matter how secure it is, it will degrade over time. I would focus on Availability next as this will add a lot of resiliency to the infrastructure and make it more effective at recovery in the event of something going down, but it is not as critical as the previous two. Lastly, I would optimize cost once the others have been addressed as it is not as critical as the other issues but it is nice to optimize where you can to fit a companies business needs and to make the infrastructure the best it can be.
