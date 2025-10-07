@@ -9,7 +9,7 @@
     - [Availability Issues](#availability-issues)
     - [Cost Optimization](#cost-optimization)
     - [Operational Shortcomings](#operational-shortcomings)
-- [Improvement Plan Priorities](#priorities-list)
+- [Improvement Plan Priorities](#improvement-plan-priorities)
 - [Resources Used](#resources-used)
 
 ## Solution Overview
