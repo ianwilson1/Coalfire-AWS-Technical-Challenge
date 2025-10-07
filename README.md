@@ -1,6 +1,6 @@
 ############### Coalfire AWS Technical Challenge Oct 2025 - Ian Wilson ###############
 
-###### Table of Contents:
+## Table of Contents:
 - [Solution Overview](#solution-overview)
 - [Design Decisions and Assumptions](#design-decisions-and-assumptions)
 - [Runbook-Style Notes](#runbook-style-notes)
@@ -12,7 +12,7 @@
 - [Improvement Plan Priorities](#priorities)
 - [Resources Used](#resources-used)
 
-###### Solution Overview
+## Solution Overview
 
 The goal of this challenge was to create a proof of concept AWS environment using Terraform. This setup showcases a basic 3 tier web application with networking, computing and a load balancer to support a simple web application.
 
@@ -29,7 +29,7 @@ The infrastructure is fully designed with Terraform to allow for consistent and 
 
 
 
-###### Design Decisions and Assumptions
+## Design Decisions and Assumptions
 
 - A lot of the services or instance types were chosen based off the instructions from the technical challenge document or were chosen to keep costs in the free tier or at the very least keep it as minimal as possible.
 
@@ -43,7 +43,7 @@ The infrastructure is fully designed with Terraform to allow for consistent and 
 ##################################################################################
 
 
-###### Runbook-Style Notes
+## Runbook-Style Notes
 
     # Prerequisites: 
         - Terraform installed on the local machine
@@ -80,9 +80,9 @@ The infrastructure is fully designed with Terraform to allow for consistent and 
 ##################################################################################
 
 
-###### Operational Analysis of Infrastructure
+## Operational Analysis of Infrastructure
 
-## Security Gaps: 
+###### Security Gaps: 
 
 #1
 - The application subnet is currently using a temporary public route so that, during provisioning, that EC2 instance can install Apache. This is a problem because that will likely expose the subnet to external access during setup and does not align well with security best practices.
@@ -109,7 +109,7 @@ Improvement Plan:
 ##################################################################################
 
 
-## Availability Issues:
+###### Availability Issues:
 
 #1
 - Right now, there is not very much utilization of different availability zones. The application and management subnet are in the same availability zone, and that poses an availability risk. If that AZ were to go down, those servers would not be reachable and pose a major operation risk. 
@@ -127,7 +127,7 @@ Improvement Plan:
     ##################################################################################
 
 
-## Cost Optimization:
+###### Cost Optimization:
     
 #1
 - There is no cost monitoring in place, so it will be hard to keep track of costs, especially if there is a budget you need to stay under.
@@ -138,7 +138,7 @@ Improvement Plan:
 
     ##################################################################################
 
-## Operational Shortcomings:
+###### Operational Shortcomings:
 
 #1
 - There is no means of any kind of patch management for the EC2 instances, this is a problem because as the installed packages or operating system become outdated, it potentially will become vulnerable to known security exploits. This will compromise the system if its not frequently patched to cover vulnerabilities proactively. 
@@ -182,7 +182,7 @@ Specific fixes:
 ##################################################################################
 
 
-###### Resources Used: 
+## Resources Used: 
 
         Terraform on AWS: Ultimate Beginner guide
         1) https://youtu.be/RiBSzAgt2Hw?si=5ovWO0nn7o_H90pO
